@@ -1,0 +1,73 @@
+<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h1 class="text-2xl font-semibold text-foreground">Cosechadores</h1>
+    <p class="mt-1 text-sm text-muted">Gestiona las personas que participan en la cosecha.</p>
+  </div>
+  <button
+    type="button"
+    (click)="createHarvester()"
+    class="inline-flex h-8 items-center gap-1.5 rounded-lg bg-primary px-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/80"
+  >
+    <svg lucidePlus class="size-4" aria-hidden="true"></svg>
+    Nuevo cosechador
+  </button>
+</div>
+
+@if (errorMessage()) {
+  <div
+    class="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+  >
+    {{ errorMessage() }}
+  </div>
+}
+
+<custom-table
+  [headers]="headers()"
+  [data]="harvesters()"
+  [pageSize]="pageSize()"
+  searchPlaceholder="Buscar cosechadores..."
+  emptyMessage="No hay cosechadores registrados."
+>
+  <ng-template appTableRow let-harvester>
+    <tr class="border-b border-border transition-colors last:border-0 hover:bg-muted/50">
+      <td class="px-2 py-2.5 font-medium text-foreground">
+        {{ harvester.rut }}-{{ harvester.dv }}
+      </td>
+      <td class="px-2 py-2.5 text-muted">{{ harvester.name }}</td>
+      <td class="px-2 py-2.5 text-muted">{{ harvester.lastname }}</td>
+      <td class="px-2 py-2.5 text-muted">{{ harvester.contrator || '—' }}</td>
+      <td class="px-2 py-2.5">
+        <span
+          class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium"
+          [class]="
+            harvester.isLoaded ? 'bg-green-500/15 text-green-400' : 'bg-amber-500/15 text-amber-400'
+          "
+        >
+          {{ harvester.isLoaded ? 'Sí' : 'Pendiente' }}
+        </span>
+      </td>
+      <td class="px-2 py-2.5">
+        <button
+          type="button"
+          (click)="viewHarvester(harvester)"
+          class="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+          [attr.aria-label]="'Ver ' + harvester.name"
+        >
+          <svg lucideEye class="size-4" aria-hidden="true"></svg>
+        </button>
+        <button
+          type="button"
+          (click)="editHarvester(harvester)"
+          class="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+          [attr.aria-label]="'Editar ' + harvester.name"
+        >
+          <svg lucideSquarePen class="size-4" aria-hidden="true"></svg>
+        </button>
+      </td>
+    </tr>
+  </ng-template>
+</custom-table>
+
+@if (detailData().length > 0) {
+  <modal [isOpen]="isViewOpen()" [data]="detailData()" (isClose)="closeView($event)" />
+}

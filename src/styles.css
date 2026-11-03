@@ -1,3 +1,109 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-background: var(--hap-bg);
+  --color-foreground: var(--hap-text-primary);
+  --color-primary: var(--hap-primary);
+  --color-primary-foreground: var(--hap-primary-foreground);
+  --color-muted: var(--hap-surface);
+  --color-muted-foreground: var(--hap-text-secondary);
+  --color-secondary: var(--hap-secondary);
+  --color-secondary-foreground: var(--hap-secondary-foreground);
+  --color-input: var(--hap-input);
+  --color-border: var(--hap-divider);
+  --color-ring: var(--hap-primary);
+}
+
+.dark {
+  --hap-bg: #131a22;
+  --hap-text-primary: #f4f7fa;
+  --hap-text-secondary: #8b95a1;
+  --hap-sidebar-bg: #1c252e;
+  --hap-sidebar-text: #c5ced6;
+  --hap-sidebar-text-active: #ffffff;
+  --hap-sidebar-active-bg: #243044;
+  --hap-sidebar-item-py: 0.55rem;
+  --hap-divider: #2a3642;
+  --hap-surface: #24303a;
+  --hap-surface-hover: #2a3844;
+  --hap-page-padding: 1.5rem;
+  --hap-section-gap: 1.5rem;
+  --hap-primary: #1a66d8;
+  --hap-primary-foreground: #ffffff;
+  --hap-primary-darker: #124eaa;
+  --hap-primary-lighter: #1a66d82e;
+  --hap-card: #1c252e;
+  --hap-card-padding: 24px;
+  --hap-secondary: #2a3440;
+  --hap-secondary-foreground: #d7dee6;
+  --hap-input: #31404d;
+  --hap-text-heading: 24px;
+  --radius-card-sm: 0.5rem;
+  --radius-card-lg: 0.75rem;
+  --radius-md: 0.5rem;
+  color-scheme: dark;
+}
+
+.light {
+  --hap-bg: #f6f8fb;
+  --hap-text-primary: #1f2937;
+  --hap-text-secondary: #64748b;
+  --hap-sidebar-bg: #ffffff;
+  --hap-sidebar-text: #64748b;
+  --hap-sidebar-text-active: #1d4ed8;
+  --hap-sidebar-active-bg: #eaf1fd;
+  --hap-sidebar-item-py: 0.55rem;
+  --hap-divider: #e2e8f0;
+  --hap-surface: #f1f5f9;
+  --hap-surface-hover: #e8eef5;
+  --hap-page-padding: 1.5rem;
+  --hap-section-gap: 1.5rem;
+  --hap-primary: #1a66d8;
+  --hap-primary-foreground: #ffffff;
+  --hap-primary-darker: #124eaa;
+  --hap-primary-lighter: #1a66d81f;
+  --hap-card: #ffffff;
+  --hap-card-padding: 24px;
+  --hap-secondary: #eef2f7;
+  --hap-secondary-foreground: #334155;
+  --hap-input: #cbd5e1;
+  --hap-text-heading: 24px;
+  --radius-card-sm: 0.5rem;
+  --radius-card-lg: 0.75rem;
+  --radius-md: 0.5rem;
+  color-scheme: light;
+}
+
+.text-muted {
+  color: var(--hap-text-secondary, #8b95a1);
+}
+
+.border-divider {
+  border-color: var(--hap-divider, #2a3642);
+}
+
+.card {
+  background: var(--hap-card);
+  border: 1px solid var(--hap-divider);
+  border-radius: var(--radius-card-lg, 0.75rem);
+  color: var(--hap-text-primary);
+  overflow: hidden;
+}
+
+.glass-overlay {
+  background: color-mix(in srgb, var(--hap-bg, #131a22) 92%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.gradient-accent {
+  background: var(--hap-primary, #1a66d8);
+}
+
+.hap-scrollbar-dark {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hap-text-secondary) transparent;
+}

@@ -1,0 +1,61 @@
+<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h1 class="text-2xl font-semibold text-foreground">Bandejas</h1>
+    <p class="mt-1 text-sm text-muted">Administra las bandejas utilizadas en la cosecha.</p>
+  </div>
+  <button
+    type="button"
+    (click)="createTray()"
+    class="inline-flex h-8 items-center gap-1.5 rounded-lg bg-primary px-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/80"
+  >
+    <svg lucidePlus class="size-4" aria-hidden="true"></svg>
+    Nueva bandeja
+  </button>
+</div>
+
+@if (errorMessage()) {
+  <div
+    class="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+  >
+    {{ errorMessage() }}
+  </div>
+}
+
+<custom-table
+  [headers]="headers()"
+  [data]="trays()"
+  [pageSize]="pageSize()"
+  searchPlaceholder="Buscar bandejas..."
+  emptyMessage="No hay bandejas registradas."
+>
+  <ng-template appTableRow let-tray>
+    <tr class="border-b border-border transition-colors last:border-0 hover:bg-muted/50">
+      <td class="px-2 py-2.5 font-medium text-foreground">{{ tray.tag }}</td>
+      <td class="px-2 py-2.5 text-muted">{{ tray.description }}</td>
+      <td class="px-2 py-2.5 text-muted">{{ tray.weight }}</td>
+      <td class="px-2 py-2.5 text-muted">{{ tray.weightPerTray }}</td>
+      <td class="px-2 py-2.5">
+        <button
+          type="button"
+          (click)="viewTray(tray)"
+          class="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+          [attr.aria-label]="'Ver ' + tray.tag"
+        >
+          <svg lucideEye class="size-4" aria-hidden="true"></svg>
+        </button>
+        <button
+          type="button"
+          (click)="editTray(tray)"
+          class="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+          [attr.aria-label]="'Editar ' + tray.tag"
+        >
+          <svg lucideSquarePen class="size-4" aria-hidden="true"></svg>
+        </button>
+      </td>
+    </tr>
+  </ng-template>
+</custom-table>
+
+@if (detailData().length > 0) {
+  <modal [isOpen]="isViewOpen()" [data]="detailData()" (isClose)="closeView($event)" />
+}

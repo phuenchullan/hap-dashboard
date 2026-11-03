@@ -1,0 +1,87 @@
+<div class="mb-6">
+  <h1 class="text-2xl font-semibold text-foreground">Crear plantación</h1>
+  <p class="mt-1 text-sm text-muted">Agrega un cultivo a un cuartel existente.</p>
+</div>
+
+@if (errorMessage()) {
+  <div
+    class="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+  >
+    {{ errorMessage() }}
+  </div>
+}
+
+<div class="card" style="padding: var(--hap-card-padding)">
+  <form (ngSubmit)="create()">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <label class="text-sm font-medium">
+        Fruta
+        <input
+          name="fruit"
+          [(ngModel)]="form.fruit"
+          required
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+        />
+      </label>
+      <label class="text-sm font-medium">
+        Variedad
+        <input
+          name="variety"
+          [(ngModel)]="form.variety"
+          required
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+        />
+      </label>
+      <label class="text-sm font-medium">
+        Superficie
+        <input
+          name="surface"
+          [(ngModel)]="form.surface"
+          type="number"
+          min="0.01"
+          step="0.01"
+          required
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+        />
+      </label>
+      <label class="text-sm font-medium">
+        Unidad
+        <select
+          name="unit"
+          [(ngModel)]="form.unit"
+          required
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-[var(--hap-card)] px-3 outline-none"
+        >
+          <option value="ha">Hectáreas</option>
+          <option value="m2">Metros cuadrados</option>
+        </select>
+      </label>
+      <label class="text-sm font-medium sm:col-span-2">
+        Cuartel
+        <select
+          name="blockId"
+          [(ngModel)]="form.blockId"
+          required
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-[var(--hap-card)] px-3 outline-none"
+        >
+          <option value="">Selecciona un cuartel</option>
+          @for (block of blocks(); track block.id) {
+            <option [value]="block.id">{{ block.name }}</option>
+          }
+        </select>
+      </label>
+    </div>
+    <div class="mt-6 flex justify-end gap-3">
+      <button type="button" (click)="close()" class="h-8 rounded-lg px-3 text-sm hover:bg-muted">
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        [disabled]="isSaving()"
+        class="h-8 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
+      >
+        {{ isSaving() ? 'Guardando...' : 'Crear plantación' }}
+      </button>
+    </div>
+  </form>
+</div>

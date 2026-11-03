@@ -1,0 +1,11 @@
+:host {
+  display: contents !important;
+}
+
+.gradient-accent {
+  background: var(--hap-primary, #1a66d8);
+}
+
+:host-context(.light) a:hover {
+  background-color: var(--hap-surface-hover);
+}

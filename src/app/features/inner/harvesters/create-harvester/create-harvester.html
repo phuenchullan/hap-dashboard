@@ -1,0 +1,86 @@
+<div class="mb-6">
+  <h1 class="text-2xl font-semibold text-foreground">Crear cosechador</h1>
+  <p class="mt-1 text-sm text-muted">Registra sus datos de identificación.</p>
+</div>
+
+@if (errorMessage()) {
+  <div
+    class="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+  >
+    {{ errorMessage() }}
+  </div>
+}
+
+<div class="card" style="padding: var(--hap-card-padding)">
+  <form (ngSubmit)="create()">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <label class="text-sm font-medium"
+        >RUT
+        <input
+          name="rut"
+          [(ngModel)]="form.rut"
+          type="number"
+          min="1"
+          required
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+        />
+      </label>
+      <label class="text-sm font-medium"
+        >DV
+        <input
+          name="dv"
+          [(ngModel)]="form.dv"
+          maxlength="1"
+          required
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 uppercase outline-none focus:border-ring"
+        />
+      </label>
+      <label class="text-sm font-medium"
+        >Nombres
+        <input
+          name="name"
+          [(ngModel)]="form.name"
+          required
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+        />
+      </label>
+      <label class="text-sm font-medium"
+        >Apellidos
+        <input
+          name="lastname"
+          [(ngModel)]="form.lastname"
+          required
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+        />
+      </label>
+      <label class="text-sm font-medium"
+        >Contratista (opcional)
+        <input
+          name="contrator"
+          [(ngModel)]="form.contrator"
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+        />
+      </label>
+      <label class="text-sm font-medium"
+        >URL de fotografía (opcional)
+        <input
+          name="photo"
+          [(ngModel)]="form.photo"
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+        />
+      </label>
+    </div>
+    <div class="mt-6 flex justify-end gap-3">
+      <button type="button" (click)="close()" class="h-8 rounded-lg px-3 text-sm hover:bg-muted">
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        [disabled]="isSaving()"
+        class="h-8 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
+      >
+        {{ isSaving() ? 'Guardando...' : 'Crear cosechador' }}
+      </button>
+    </div>
+  </form>
+</div>

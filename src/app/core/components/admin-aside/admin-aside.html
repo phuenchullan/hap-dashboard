@@ -1,0 +1,231 @@
+<aside [class]="style()">
+  <div class="flex h-16 items-center gap-3 border-b border-[var(--hap-divider)] px-4">
+    <div
+      class="flex size-8 shrink-0 items-center justify-center rounded-lg gradient-accent text-sm font-bold text-white"
+    >
+      A
+    </div>
+    @if (isOpenSidebar()) {
+      <span class="truncate text-lg font-semibold text-[var(--hap-text-primary)]"
+        >Af Organic Fresh</span
+      >
+    }
+  </div>
+  <nav class="hap-scrollbar-dark flex-1 space-y-6 overflow-y-auto p-3">
+    <div>
+      @if (isOpenSidebar()) {
+        <p class="mb-2 px-3 text-xs font-medium uppercase tracking-wider text-muted">Gestión</p>
+      }
+      <ul class="space-y-1">
+        @for (item of tagIcons(); track item.link; let index = $index) {
+          <li [class]="styleSidebar()">
+            <aside-item
+              [tag]="item.tag"
+              [itemSelected]="item.selected"
+              [icon]="item.icon"
+              [index]="index"
+              [link]="item.link"
+              (changeSelected)="onChangeSelected($event)"
+              [isOpenSidebar]="isOpenSidebar()"
+            />
+          </li>
+        }
+        <!-- <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/mail"><svg lucideMail class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span class="truncate">Mail</span></a>
+                                </li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/kanban"><svg lucideKanban class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Kanban</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/calendar"><svg lucideCalendar class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Calendar</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/files"><svg lucideFolder class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span class="truncate">Files</span></a>
+                                </li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/charts"><svg lucideChartPie class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Charts</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/editor"><svg lucideFilePenLine class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Editor</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/map"><svg lucideMapPin class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span class="truncate">Map</span></a>
+                                </li> -->
+      </ul>
+    </div>
+    <!--   <div>
+                        @if (isOpenSidebar()) {
+                                <p class="mb-2 px-3 text-xs font-medium uppercase tracking-wider text-muted">Pages</p>
+                        }
+                        <ul class="space-y-1">
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/forms"><svg lucideFileText class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span class="truncate">Forms</span></a>
+                                </li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/wizard"><svg lucideListChecks class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Wizard</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/pricing"><svg lucideCreditCard class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Pricing</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/billing"><svg lucideReceipt class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Billing</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/notifications"><svg lucideBell class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Notifications</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/support"><svg lucideLifeBuoy class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Support</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/components"><svg lucideComponent class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Components</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/apps/timeline"><svg lucideGitCommitVertical
+                                                        class="size-5 shrink-0" aria-hidden="true"></svg><span
+                                                        class="truncate">Timeline</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/search"><svg lucideSearch class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Search</span></a></li>
+                        </ul>
+                </div>
+                <div>
+                        @if (isOpenSidebar()) {
+                                <p class="mb-2 px-3 text-xs font-medium uppercase tracking-wider text-muted">Layouts</p>
+                        }
+                        <ul class="space-y-1">
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8 bg-[var(--hap-sidebar-active-bg)] text-[var(--hap-sidebar-text-active)]"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/dashboard"><svg lucidePanelLeft class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span class="truncate">Sidebar
+                                                        (Default)</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/layouts/horizontal"><svg lucidePanelTop class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Horizontal</span></a></li>
+                        </ul>
+                </div>
+                <div>
+                        @if (isOpenSidebar()) {
+                                <p class="mb-2 px-3 text-xs font-medium uppercase tracking-wider text-muted">Management</p>
+                        }
+                        <ul class="space-y-1">
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/orders"><svg lucidePackage class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Orders</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/products"><svg lucideBox class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Products</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/customers"><svg lucideContact class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Customers</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/invoices"><svg lucideFileSpreadsheet class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Invoices</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/users"><svg lucideUserCog class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span class="truncate">Users</span></a>
+                                </li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/roles"><svg lucideShield class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span class="truncate">Roles</span></a>
+                                </li>
+                        </ul>
+                </div>
+                <div>
+                        @if (isOpenSidebar()) {
+                                <p class="mb-2 px-3 text-xs font-medium uppercase tracking-wider text-muted">Account</p>
+                        }
+                        <ul class="space-y-1">
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/profile"><svg lucideCircleUserRound class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Profile</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/profile/activity"><svg lucideActivity class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Activity</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/profile/connections"><svg lucideUsersRound
+                                                        class="size-5 shrink-0" aria-hidden="true"></svg><span
+                                                        class="truncate">Connections</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/profile/gallery"><svg lucideImage class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Gallery</span></a></li>
+                        </ul>
+                </div>
+                <div>
+                        @if (isOpenSidebar()) {
+                                <p class="mb-2 px-3 text-xs font-medium uppercase tracking-wider text-muted">Settings</p>
+                        }
+                        <ul class="space-y-1">
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/settings/profile"><svg lucideUser class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Profile</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/settings/password"><svg lucideLock class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Password</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/settings/appearance"><svg lucidePalette class="size-5 shrink-0"
+                                                        aria-hidden="true"></svg><span
+                                                        class="truncate">Appearance</span></a></li>
+                                <li><a class="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-3 text-sm transition-all duration-200 hover:bg-white/8"
+                                                style="padding-top:var(--hap-sidebar-item-py);padding-bottom:var(--hap-sidebar-item-py)"
+                                                href="/settings/two-factor"><svg lucideSmartphone
+                                                        class="size-5 shrink-0" aria-hidden="true"></svg><span
+                                                        class="truncate">Two-Factor</span></a></li>
+                        </ul>
+                </div> -->
+  </nav>
+</aside>

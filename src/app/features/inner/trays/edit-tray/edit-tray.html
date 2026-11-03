@@ -1,0 +1,83 @@
+<div class="mb-6">
+  <h1 class="text-2xl font-semibold text-foreground">Editar bandeja</h1>
+  <p class="mt-1 text-sm text-muted">Actualiza la información de la bandeja.</p>
+</div>
+
+@if (errorMessage()) {
+  <div
+    class="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+  >
+    {{ errorMessage() }}
+  </div>
+}
+
+@if (trayResource.isLoading()) {
+  <div class="card text-sm text-muted" style="padding: var(--hap-card-padding)">
+    Cargando bandeja...
+  </div>
+} @else {
+  <div class="card" style="padding: var(--hap-card-padding)">
+    <form (ngSubmit)="update()">
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <label class="text-sm font-medium">
+          Etiqueta
+          <input
+            name="tag"
+            [ngModel]="form().tag"
+            (ngModelChange)="updateField('tag', $event)"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+        <label class="text-sm font-medium">
+          Descripción
+          <input
+            name="description"
+            [ngModel]="form().description"
+            (ngModelChange)="updateField('description', $event)"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+        <label class="text-sm font-medium">
+          Peso
+          <input
+            name="weight"
+            [ngModel]="form().weight"
+            (ngModelChange)="updateField('weight', $event)"
+            type="number"
+            min="0.01"
+            step="0.01"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+        <label class="text-sm font-medium">
+          Peso por bandeja
+          <input
+            name="weightPerTray"
+            [ngModel]="form().weightPerTray"
+            (ngModelChange)="updateField('weightPerTray', $event)"
+            type="number"
+            min="0.01"
+            step="0.01"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+      </div>
+      <div class="mt-6 flex justify-end gap-3">
+        <button type="button" (click)="close()" class="h-8 rounded-lg px-3 text-sm hover:bg-muted">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="isSaving()"
+          class="h-8 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
+        >
+          {{ isSaving() ? 'Guardando...' : 'Actualizar bandeja' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

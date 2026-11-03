@@ -1,0 +1,12 @@
+:host {
+  display: contents !important;
+}
+
+.dark,
+.light {
+  background-color: var(--hap-bg);
+  color: var(--hap-text-primary);
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}

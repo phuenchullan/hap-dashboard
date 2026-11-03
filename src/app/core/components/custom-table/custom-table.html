@@ -1,0 +1,84 @@
+<div class="space-y-4">
+  <div class="flex flex-1 items-center gap-3">
+    <div class="relative w-full max-w-xs">
+      <svg lucideSearch class="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted" aria-hidden="true"></svg>
+      <input
+        class="h-8 w-full rounded-lg border border-input bg-transparent pr-2.5 pl-8 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+        [placeholder]="searchPlaceholder()"
+        [value]="query()"
+        (input)="onQuery($any($event.target).value)"
+      />
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="w-full overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-border">
+            @for (column of columns(); track column.key) {
+              <th class="h-10 px-4 text-left font-medium text-muted-foreground">{{ column.label }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @if (customRow(); as row) {
+            @for (item of visible(); track trackItem($index, item)) {
+              <ng-container
+                [ngTemplateOutlet]="row.template"
+                [ngTemplateOutletContext]="{ $implicit: item, index: $index }"
+              />
+            } @empty {
+              <tr>
+                <td class="px-4 py-8 text-center text-muted" [attr.colspan]="columns().length">
+                  {{ emptyMessage() }}
+                </td>
+              </tr>
+            }
+          } @else {
+            @for (item of visible(); track trackItem($index, item)) {
+              <tr class="border-b border-border transition-colors last:border-0 hover:bg-muted/50">
+                @for (column of columns(); track column.key) {
+                  <td class="px-4 py-2.5 text-foreground">
+                    {{ displayValue(cellValue(item, column.key)) }}
+                  </td>
+                }
+              </tr>
+            } @empty {
+              <tr>
+                <td class="px-4 py-8 text-center text-muted" [attr.colspan]="columns().length">
+                  {{ emptyMessage() }}
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  @if (data().length > 0) {
+    <div class="flex items-center justify-between">
+      <p class="text-sm text-muted">Showing {{ rangeStart() }}–{{ rangeEnd() }} of {{ filtered().length }}</p>
+      <div class="flex items-center gap-1">
+        <button
+          type="button"
+          class="h-7 rounded-lg px-2.5 text-sm hover:bg-muted hover:text-foreground disabled:opacity-50"
+          [disabled]="currentPage() === 1"
+          (click)="previousPage()"
+        >
+          Previous
+        </button>
+        <span class="px-3 text-sm">{{ currentPage() }} / {{ pageCount() }}</span>
+        <button
+          type="button"
+          class="h-7 rounded-lg px-2.5 text-sm hover:bg-muted hover:text-foreground disabled:opacity-50"
+          [disabled]="currentPage() === pageCount()"
+          (click)="nextPage()"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,4 @@
+select option {
+  background-color: var(--hap-card);
+  color: var(--hap-text-primary);
+}

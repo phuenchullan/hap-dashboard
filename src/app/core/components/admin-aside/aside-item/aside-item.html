@@ -1,0 +1,14 @@
+<a
+  [class]="style()"
+  style="padding-top: var(--hap-sidebar-item-py); padding-bottom: var(--hap-sidebar-item-py)"
+  [routerLink]="link()"
+  (click)="onSelectedChange()"
+>
+@if (isOpenSidebar()) {
+    <svg [lucideIcon]="icon()" class="size-5 shrink-0" aria-hidden="true"></svg>
+
+    <span class="truncate">{{ tag()  }}</span>
+  }@else{
+    <svg [lucideIcon]="icon()" class="size-5 shrink-0" aria-hidden="true"></svg>
+  }
+</a>

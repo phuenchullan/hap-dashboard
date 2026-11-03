@@ -1,0 +1,134 @@
+<div class="mb-6">
+  <h1 class="text-2xl font-semibold text-foreground">Editar cosechador</h1>
+  <p class="mt-1 text-sm text-muted">Actualiza sus datos personales y de sincronización.</p>
+</div>
+
+@if (errorMessage()) {
+  <div
+    class="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+  >
+    {{ errorMessage() }}
+  </div>
+}
+
+@if (harvesterResource.isLoading()) {
+  <div class="card text-sm text-muted" style="padding: var(--hap-card-padding)">
+    Cargando cosechador...
+  </div>
+} @else {
+  <div class="card" style="padding: var(--hap-card-padding)">
+    <form (ngSubmit)="update()">
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <label class="text-sm font-medium"
+          >RUT
+          <input
+            name="rut"
+            [ngModel]="form().rut"
+            (ngModelChange)="updateField('rut', $event)"
+            type="number"
+            min="1"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+        <label class="text-sm font-medium"
+          >DV
+          <input
+            name="dv"
+            [ngModel]="form().dv"
+            (ngModelChange)="updateField('dv', $event)"
+            maxlength="1"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 uppercase outline-none focus:border-ring"
+          />
+        </label>
+        <label class="text-sm font-medium"
+          >Nombres
+          <input
+            name="name"
+            [ngModel]="form().name"
+            (ngModelChange)="updateField('name', $event)"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+        <label class="text-sm font-medium"
+          >Apellidos
+          <input
+            name="lastname"
+            [ngModel]="form().lastname"
+            (ngModelChange)="updateField('lastname', $event)"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+        <label class="text-sm font-medium"
+          >Contratista
+          <input
+            name="contrator"
+            [ngModel]="form().contrator"
+            (ngModelChange)="updateField('contrator', $event)"
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+        <!-- <label class="text-sm font-medium"
+          >URL de fotografía
+          <input
+            name="photo"
+            [ngModel]="form().photo"
+            (ngModelChange)="updateField('photo', $event)"
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label> -->
+        <label class="text-sm font-medium"
+          >ID local
+          <input
+            name="localStorePhoneId"
+            [ngModel]="form().localStorePhoneId"
+            (ngModelChange)="updateField('localStorePhoneId', $event)"
+            type="number"
+            min="1"
+            required
+            disabled
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+        <label class="text-sm font-medium"
+          >ID del dispositivo
+          <input
+            name="phoneId"
+            [ngModel]="form().phoneId"
+            (ngModelChange)="updateField('phoneId', $event)"
+            required
+            disabled
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+        <label class="text-sm font-medium"
+          >Sincronizado
+          <select
+            name="isLoaded"
+            [ngModel]="form().isLoaded"
+            (ngModelChange)="updateField('isLoaded', $event)"
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-[var(--hap-card)] px-3 outline-none"
+          >
+            <option [ngValue]="false">Pendiente</option>
+            <option [ngValue]="true">Sí</option>
+          </select>
+        </label>
+      </div>
+      <div class="mt-6 flex justify-end gap-3">
+        <button type="button" (click)="close()" class="h-8 rounded-lg px-3 text-sm hover:bg-muted">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="isSaving()"
+          class="h-8 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
+        >
+          {{ isSaving() ? 'Guardando...' : 'Actualizar cosechador' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

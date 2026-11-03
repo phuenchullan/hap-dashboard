@@ -1,0 +1,62 @@
+<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h1 class="text-2xl font-semibold text-foreground">Plantaciones</h1>
+    <p class="mt-1 text-sm text-muted">Administra los cultivos asociados a cada cuartel.</p>
+  </div>
+  <button
+    type="button"
+    (click)="createPlantation()"
+    class="inline-flex h-8 items-center gap-1.5 rounded-lg bg-primary px-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/80"
+  >
+    <svg lucidePlus class="size-4" aria-hidden="true"></svg>
+    Nueva plantación
+  </button>
+</div>
+
+@if (errorMessage()) {
+  <div
+    class="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+  >
+    {{ errorMessage() }}
+  </div>
+}
+
+<custom-table
+  [headers]="headers()"
+  [data]="plantations()"
+  [pageSize]="pageSize()"
+  searchPlaceholder="Buscar plantaciones..."
+  emptyMessage="No hay plantaciones registradas."
+>
+  <ng-template appTableRow let-plantation>
+    <tr class="border-b border-border transition-colors last:border-0 hover:bg-muted/50">
+      <td class="px-2 py-2.5 font-medium text-foreground">{{ plantation.fruit }}</td>
+      <td class="px-2 py-2.5 text-muted">{{ plantation.variety }}</td>
+      <td class="px-2 py-2.5 text-muted">{{ plantation.surface }}</td>
+      <td class="px-2 py-2.5 text-muted">{{ plantation.unit }}</td>
+      <td class="px-2 py-2.5 text-muted">{{ blockName(plantation.blockId) }}</td>
+      <td class="px-2 py-2.5">
+        <button
+          type="button"
+          (click)="viewPlantation(plantation)"
+          class="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+          [attr.aria-label]="'Ver ' + plantation.fruit"
+        >
+          <svg lucideEye class="size-4" aria-hidden="true"></svg>
+        </button>
+        <button
+          type="button"
+          (click)="editPlantation(plantation)"
+          class="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+          [attr.aria-label]="'Editar ' + plantation.fruit"
+        >
+          <svg lucideSquarePen class="size-4" aria-hidden="true"></svg>
+        </button>
+      </td>
+    </tr>
+  </ng-template>
+</custom-table>
+
+@if (detailData().length > 0) {
+  <modal [isOpen]="isViewOpen()" [data]="detailData()" (isClose)="closeView($event)" />
+}

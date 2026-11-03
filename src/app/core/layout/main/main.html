@@ -1,0 +1,9 @@
+<div [class]="style()">
+    <admin-aside [isOpenSidebar]="isOpenSidebar()" />
+    <div class="flex flex-1 flex-col overflow-hidden">
+        <admin-header [user]="user()" (toggleSidebar)="onToggleSidebar($event)" (darkModeOutput)="onToggleDarkMode($event)" />
+        <main class="flex flex-1 flex-col overflow-y-auto" style="padding:var(--hap-page-padding)">
+            <router-outlet />
+        </main>
+    </div>
+</div>
