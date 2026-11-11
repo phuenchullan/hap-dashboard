@@ -34,7 +34,6 @@ export class Main {
   userResource = resource({
     loader: async () => {
       const response = await this.api.getMe();
-      console.log(response);
       this.user.set({
         id: response.id,
         rut: response.rut,
@@ -46,7 +45,6 @@ export class Main {
         isActive: response.isActive,
         activeLand: response.activeLand,
       });
-      console.log(this.user());
       return response;
     },
   });
@@ -64,7 +62,6 @@ export class Main {
   isOpenSidebar = signal(true);
 
   onToggleSidebar(isOpenSidebar: boolean) {
-    console.log({ isOpenSidebar });
     this.isOpenSidebar.set(isOpenSidebar);
   }
 
