@@ -1,5 +1,5 @@
 import { Service, inject } from '@angular/core';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { PageResponse } from '../../interfaces/harvest.interface';
 import { Storage } from '../storage/storage';
 

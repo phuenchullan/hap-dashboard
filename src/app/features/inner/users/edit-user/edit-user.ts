@@ -7,7 +7,7 @@ import { form } from '@angular/forms/signals';
 import { Users as UsersService } from '../../../../core/services/users/users';
 import { Land } from '../../../../core/interfaces/harvest.interface';
 import { httpResource } from '@angular/common/http';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 
 interface EditablePermission extends UserPermission {
   uid: number;
@@ -32,7 +32,7 @@ export class EditUser {
   landsResource = resource({
     loader: async () => {
       const accessToken = await this.storage.getItem('accessToken');
-      const response = await fetch(`http://${environment.apiUrl}/lands`, {
+      const response = await fetch(`${environment.apiUrl}/lands`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

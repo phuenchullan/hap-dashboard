@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 import { UpdateUser, UserRow } from '../../interfaces/users.interface';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { Storage } from '../storage/storage';
 
 @Service()
