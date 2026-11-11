@@ -19,6 +19,7 @@ interface EditablePermission extends UserPermission {
   templateUrl: './edit-user.html',
 })
 export class EditUser {
+  
   api = inject(HarvestApi);
   router = inject(Router);
   route = inject(ActivatedRoute);
