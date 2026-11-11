@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { Modal } from '../../../core/components/modal/modal';
 import { Storage } from '../../../core/services/storage/storage';
 import { Users as UsersService } from '../../../core/services/users/users';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   imports: [
@@ -64,7 +65,7 @@ export class Users {
   usersResource = resource({
     loader: async () => {
       const accessToken = await this.storage.getItem('accessToken');
-      const response = await fetch('http://localhost:3000/users', {
+      const response = await fetch(`${environment.apiUrl}/users`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
