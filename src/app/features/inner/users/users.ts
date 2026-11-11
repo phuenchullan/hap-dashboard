@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { Modal } from '../../../core/components/modal/modal';
 import { Storage } from '../../../core/services/storage/storage';
 import { Users as UsersService } from '../../../core/services/users/users';
+import { environment } from '../../../../environments/environment';
 import { HarvestApi } from '../../../core/services/harvest-api/harvest-api';
 
 @Component({
@@ -76,7 +77,7 @@ export class Users {
   usersResource = resource({
     loader: async () => {
       const accessToken = await this.storage.getItem('accessToken');
-      const response = await fetch('http://localhost:3000/users', {
+      const response = await fetch(`${environment.apiUrl}/users`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
