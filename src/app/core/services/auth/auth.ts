@@ -1,5 +1,5 @@
 import { Service } from '@angular/core';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 
 
 @Service()
