@@ -1,0 +1,139 @@
+<div class="mb-6">
+  <h1 class="text-2xl font-semibold text-foreground">Editar cosecha</h1>
+  <p class="mt-1 text-sm text-muted">Actualiza la recepción de bandejas.</p>
+</div>
+
+@if (errorMessage()) {
+  <div
+    class="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+  >
+    {{ errorMessage() }}
+  </div>
+}
+
+@if (takeResource.isLoading()) {
+  <div class="card text-sm text-muted" style="padding: var(--hap-card-padding)">
+    Cargando cosecha...
+  </div>
+} @else {
+  <div class="card" style="padding: var(--hap-card-padding)">
+    <form (ngSubmit)="update()">
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <label class="text-sm font-medium sm:col-span-2">
+          Bandeja
+          <select
+            name="trayId"
+            [ngModel]="form().trayId"
+            (ngModelChange)="updateField('trayId', $event)"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-[var(--hap-card)] px-3 outline-none"
+          >
+            <option value="">Selecciona una bandeja</option>
+            @for (tray of trays(); track tray.id) {
+              <option [value]="tray.id">{{ tray.tag }} · {{ tray.description }}</option>
+            }
+          </select>
+        </label>
+        <label class="text-sm font-medium sm:col-span-2">
+          Plantación
+          <select
+            name="plantationId"
+            [ngModel]="form().plantationId"
+            (ngModelChange)="updateField('plantationId', $event)"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-[var(--hap-card)] px-3 outline-none"
+          >
+            <option value="">Selecciona una plantación</option>
+            @for (plantation of plantations(); track plantation.id) {
+              <option [value]="plantation.id">
+                {{ plantation.fruit }} · {{ plantation.variety }}
+              </option>
+            }
+          </select>
+        </label>
+        <label class="text-sm font-medium sm:col-span-2">
+          Cosechador
+          <select
+            name="harvesterId"
+            [ngModel]="form().harvesterId"
+            (ngModelChange)="updateField('harvesterId', $event)"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-[var(--hap-card)] px-3 outline-none"
+          >
+            <option value="">Selecciona un cosechador</option>
+            @for (harvester of harvesters(); track harvester.id) {
+              <option [value]="harvester.id">
+                {{ harvester.name }} {{ harvester.lastname }} · {{ harvester.rut }}-{{
+                  harvester.dv
+                }}
+              </option>
+            }
+          </select>
+        </label>
+        <label class="text-sm font-medium">
+          Cantidad de bandejas
+          <input
+            name="numberOfTray"
+            [ngModel]="form().numberOfTray"
+            (ngModelChange)="updateField('numberOfTray', $event)"
+            type="number"
+            min="1"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+        <label class="text-sm font-medium">
+          Precio
+          <input
+            name="price"
+            [ngModel]="form().price"
+            (ngModelChange)="updateField('price', $event)"
+            type="number"
+            min="0.01"
+            step="0.01"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+        <label class="text-sm font-medium">
+          Peso bruto
+          <input
+            name="brute"
+            [ngModel]="form().brute"
+            (ngModelChange)="updateField('brute', $event)"
+            type="number"
+            min="0.01"
+            step="0.01"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+        <label class="text-sm font-medium">
+          Peso neto
+          <input
+            name="neto"
+            [ngModel]="form().neto"
+            (ngModelChange)="updateField('neto', $event)"
+            type="number"
+            min="0.01"
+            step="0.01"
+            required
+            class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+          />
+        </label>
+      </div>
+      <div class="mt-6 flex justify-end gap-3">
+        <button type="button" (click)="close()" class="h-8 rounded-lg px-3 text-sm hover:bg-muted">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="isSaving()"
+          class="h-8 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
+        >
+          {{ isSaving() ? 'Guardando...' : 'Actualizar cosecha' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

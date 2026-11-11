@@ -1,16 +1,6 @@
-<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-  <div>
-    <h1 class="text-2xl font-semibold text-foreground">Cosecha</h1>
-    <p class="mt-1 text-sm text-muted">Consulta y registra las recepciones de bandejas.</p>
-  </div>
-  <button
-    type="button"
-    (click)="isOpen.set(true)"
-    class="inline-flex h-8 items-center gap-1.5 rounded-lg bg-primary px-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/80"
-  >
-    <svg lucidePlus class="size-4" aria-hidden="true"></svg>
-    Nueva cosecha
-  </button>
+<div class="mb-6">
+  <h1 class="text-2xl font-semibold text-foreground">Cosecha</h1>
+  <p class="mt-1 text-sm text-muted">Consulta las recepciones de bandejas.</p>
 </div>
 
 @if (errorMessage()) {
@@ -21,17 +11,45 @@
   </div>
 }
 
+<div class="card mb-5 grid gap-4 p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+  <label class="text-sm font-medium">
+    Fecha inicial
+    <input
+      type="date"
+      [ngModel]="startDate()"
+      (ngModelChange)="startDate.set($event)"
+      class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+    />
+  </label>
+  <label class="text-sm font-medium">
+    Fecha final
+    <input
+      type="date"
+      [ngModel]="endDate()"
+      (ngModelChange)="endDate.set($event)"
+      class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+    />
+  </label>
+  <button
+    type="button"
+    (click)="applyDateFilter()"
+    class="h-9 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground"
+  >
+    Filtrar
+  </button>
+</div>
+
 <div class="mb-5 grid gap-4 sm:grid-cols-3">
   <div class="card p-4">
     <p class="text-xs uppercase text-muted">Registros</p>
-    <p class="mt-2 text-2xl font-semibold">{{ takes().length }}</p>
+    <p class="mt-2 text-2xl font-semibold">{{ totalRecords() }}</p>
   </div>
   <div class="card p-4">
-    <p class="text-xs uppercase text-muted">Bandejas</p>
+    <p class="text-xs uppercase text-muted">Bandejas (página)</p>
     <p class="mt-2 text-2xl font-semibold">{{ totalTrays() }}</p>
   </div>
   <div class="card p-4">
-    <p class="text-xs uppercase text-muted">Kg netos</p>
+    <p class="text-xs uppercase text-muted">Kg netos (página)</p>
     <p class="mt-2 text-2xl font-semibold">{{ totalNet() | number: '1.1-1' }}</p>
   </div>
 </div>
@@ -40,11 +58,15 @@
   [headers]="headers()"
   [data]="takes()"
   [pageSize]="pageSize()"
+  [totalRecords]="totalRecords()"
+  [pageIndex]="page()"
+  (pageChange)="changePage($event)"
   searchPlaceholder="Buscar cosechas..."
   emptyMessage="No hay cosechas registradas."
 >
   <ng-template appTableRow let-take>
     <tr class="border-b border-border transition-colors last:border-0 hover:bg-muted/50">
+      <td class="px-2 py-2.5 text-muted">{{ take.createdAt | date: 'dd/MM/yyyy' }}</td>
       <td class="px-2 py-2.5 font-medium text-foreground">{{ harvesterName(take.harvesterId) }}</td>
       <td class="px-2 py-2.5 text-muted">{{ take.numberOfTray }}</td>
       <td class="px-2 py-2.5 text-muted">{{ take.brute | number: '1.1-2' }}</td>
@@ -58,119 +80,32 @@
           [class]="
             take.isLoaded ? 'bg-green-500/15 text-green-400' : 'bg-amber-500/15 text-amber-400'
           "
-          >{{ take.isLoaded ? 'Sí' : 'Pendiente' }}</span
         >
+          {{ take.isLoaded ? 'Sí' : 'Pendiente' }}
+        </span>
       </td>
       <td class="px-2 py-2.5">
-        <button type="button" class="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground" [attr.aria-label]="'View '">
-            <svg lucideEye class="size-4" aria-hidden="true"></svg>
-          </button>
-          <button type="button" class="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground" [attr.aria-label]="'View '">
-            <svg lucideSquarePen class="size-4" aria-hidden="true"></svg>
-          </button>
-          <button type="button" class="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground" [attr.aria-label]="'View '">
-            <svg lucideTrash class="size-4" aria-hidden="true"></svg>
-          </button>
+        <button
+          type="button"
+          (click)="viewTake(take)"
+          class="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+          [attr.aria-label]="'Ver cosecha'"
+        >
+          <svg lucideEye class="size-4" aria-hidden="true"></svg>
+        </button>
+        <button
+          type="button"
+          (click)="editTake(take)"
+          class="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+          [attr.aria-label]="'Editar cosecha'"
+        >
+          <svg lucideSquarePen class="size-4" aria-hidden="true"></svg>
+        </button>
       </td>
     </tr>
   </ng-template>
 </custom-table>
 
-<dialog
-  [open]="isOpen()"
-  class="fixed inset-0 m-auto w-[min(92%,680px)] rounded-xl border border-border bg-[var(--hap-card)] p-0 text-foreground shadow-2xl backdrop:bg-black/60"
->
-  <form class="p-6" (ngSubmit)="create()">
-    <h2 class="text-xl font-semibold">Nueva cosecha</h2>
-    <p class="mt-1 text-sm text-muted">Registra pesos, bandejas y cosechador.</p>
-    <div class="mt-5 grid gap-4 sm:grid-cols-2">
-      <label class="text-sm font-medium sm:col-span-2"
-        >Bandeja
-        <select
-          name="trayId"
-          [(ngModel)]="form.trayId"
-          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-[var(--hap-card)] px-3 outline-none"
-        >
-          <option value="">Selecciona una bandeja</option>
-          @for (tray of trays(); track tray.id) {
-            <option [value]="tray.id">{{ tray.tag }} · {{ tray.description }}</option>
-          }
-        </select>
-      </label>
-      <label class="text-sm font-medium sm:col-span-2"
-        >Cosechador
-        <select
-          name="harvesterId"
-          [(ngModel)]="form.harvesterId"
-          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-[var(--hap-card)] px-3 outline-none"
-        >
-          <option value="">Selecciona un cosechador</option>
-          @for (harvester of harvesters(); track harvester.id) {
-            <option [value]="harvester.id">
-              {{ harvester.name }} {{ harvester.lastname }} · {{ harvester.rut }}-{{ harvester.dv }}
-            </option>
-          }
-        </select>
-      </label>
-      <label class="text-sm font-medium"
-        >Cantidad de bandejas
-        <input
-          name="numberOfTray"
-          [(ngModel)]="form.numberOfTray"
-          type="number"
-          min="1"
-          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
-        />
-      </label>
-      <label class="text-sm font-medium"
-        >Precio
-        <input
-          name="price"
-          [(ngModel)]="form.price"
-          type="number"
-          min="0.01"
-          step="0.01"
-          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
-        />
-      </label>
-      <label class="text-sm font-medium"
-        >Peso bruto
-        <input
-          name="brute"
-          [(ngModel)]="form.brute"
-          type="number"
-          min="0.01"
-          step="0.01"
-          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
-        />
-      </label>
-      <label class="text-sm font-medium"
-        >Peso neto
-        <input
-          name="neto"
-          [(ngModel)]="form.neto"
-          type="number"
-          min="0.01"
-          step="0.01"
-          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
-        />
-      </label>
-    </div>
-    <div class="mt-6 flex justify-end gap-3">
-      <button
-        type="button"
-        (click)="isOpen.set(false)"
-        class="h-8 rounded-lg px-3 text-sm hover:bg-muted"
-      >
-        Cancelar
-      </button>
-      <button
-        type="submit"
-        [disabled]="isSaving()"
-        class="h-8 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
-      >
-        {{ isSaving() ? 'Guardando...' : 'Guardar' }}
-      </button>
-    </div>
-  </form>
-</dialog>
+@if (detailData().length > 0) {
+  <modal [isOpen]="isViewOpen()" [data]="detailData()" (isClose)="closeView($event)" />
+}

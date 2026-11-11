@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { Storage } from '../../services/storage/storage';
 import { LucideChevronDown, LucideMenu, LucideMoon, LucidePanelLeftClose, LucidePanelLeftOpen, LucideSun } from '@lucide/angular';
@@ -8,7 +8,16 @@ import { NgOptimizedImage } from '@angular/common';
 import { UserRow } from '../../interfaces/users.interface';
 
 @Component({
-  imports: [LucidePanelLeftClose, LucidePanelLeftOpen, LucideMenu, LucideMoon, LucideSun, LucideChevronDown, NgOptimizedImage],
+  imports: [
+    LucidePanelLeftClose, 
+    LucidePanelLeftOpen, 
+    LucideMenu, 
+    LucideMoon, 
+    LucideSun, 
+    LucideChevronDown, 
+    NgOptimizedImage,
+    RouterLink
+  ],
   selector: 'admin-header',
   styleUrl: './admin-header.css',
   templateUrl: './admin-header.html',

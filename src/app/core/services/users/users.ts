@@ -1,5 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { UpdateUser, UserRow } from '../../interfaces/users.interface';
+import { CreateUser, UpdateUser, UserRow } from '../../interfaces/users.interface';
 import { environment } from '../../../../environments/environment.development';
 import { Storage } from '../storage/storage';
 
@@ -7,18 +7,25 @@ import { Storage } from '../storage/storage';
 export class Users {
   storage = inject(Storage);
 
-  async create(user: UserRow) {
-    const accessToken = this.storage.getItem('accessToken');
-    const response = fetch(`${environment.apiUrl}/users`, {
+  async create(user: CreateUser): Promise<UserRow> {
+    const accessToken = await this.storage.getItem('accessToken');
+    const response = await fetch(`${environment.apiUrl}/users`, {
       method: 'POST',
       body: JSON.stringify(user),
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken ?? ''}`,
       },
     });
-    const data = (await response).json();
-    return data;
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => null);
+      const message =
+        typeof error?.message === 'string' ? error.message : 'No fue posible crear el usuario.';
+      throw new Error(message);
+    }
+
+    return response.json() as Promise<UserRow>;
   }
 
   async delete(id: string): Promise<void> {

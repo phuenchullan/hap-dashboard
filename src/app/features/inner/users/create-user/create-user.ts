@@ -1,9 +1,14 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, resource, signal } from '@angular/core';
 import { form, FormField, FormRoot, required } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { PasswordInput } from '../../../../core/components/password-input/password-input';
 import { Users } from '../../../../core/services/users/users';
-import { UserRow } from '../../../../core/interfaces/users.interface';
+import {
+  CreateUser as CreateUserPayload,
+  UserRow,
+} from '../../../../core/interfaces/users.interface';
+import { Land } from '../../../../core/interfaces/harvest.interface';
+import { HarvestApi } from '../../../../core/services/harvest-api/harvest-api';
 
 @Component({
   imports: [FormRoot, FormField, PasswordInput],
@@ -12,10 +17,14 @@ import { UserRow } from '../../../../core/interfaces/users.interface';
   templateUrl: './create-user.html',
 })
 export class CreateUser {
-
   router = inject(Router);
   usersService = inject(Users);
+  api = inject(HarvestApi);
+
   passwordVisibility = signal<string>('password');
+  lands = signal<Land[]>([]);
+  isSaving = signal(false);
+  errorMessage = signal<string | null>(null);
 
   userModel = signal({
     id: '',
@@ -27,53 +36,72 @@ export class CreateUser {
     role: 'admin',
     isActive: 'true',
     password: '',
+    activeLand: '',
+  });
+
+  landsResource = resource({
+    loader: async () => {
+      const response = await this.api.list<Land>('lands');
+      this.lands.set(response.data);
+      return response;
+    },
   });
 
   userForm = form(this.userModel, (schemaPath) => {
-    required(schemaPath.rut, { message: 'El nombre de usuario es requerido' });
-    required(schemaPath.dv, { message: 'El DV es requerido' });
+    required(schemaPath.rut, { message: 'El RUT es requerido' });
     required(schemaPath.name, { message: 'El nombre es requerido' });
     required(schemaPath.lastname, { message: 'El apellido es requerido' });
     required(schemaPath.email, { message: 'El email es requerido' });
     required(schemaPath.role, { message: 'El rol es requerido' });
-    required(schemaPath.isActive, { message: 'El estado es requerido' });
     required(schemaPath.password, { message: 'La contraseña es requerida' });
   });
 
-
-
-  togglePasswordVisibility(){
-    if(this.passwordVisibility() === 'password'){
-      this.passwordVisibility.set('text');
-    }else{
-      this.passwordVisibility.set('password');
-    }
+  togglePasswordVisibility() {
+    this.passwordVisibility.update((value) => (value === 'password' ? 'text' : 'password'));
   }
 
-  close(){
+  close() {
     this.router.navigate(['/users']);
   }
 
-  create(){
-    const separatedRut = this.userForm().value().rut.split('-');
-    this.userForm().value().dv = separatedRut[1];
-    this.userForm().value().rut = separatedRut[0];
-    console.log(this.userForm().invalid());
-    const newUser: UserRow = {
-      id: '',
-      rut: Number(this.userForm().value().rut),
-      dv: this.userForm().value().dv,
-      name: this.userForm().value().name,
-      lastname: this.userForm().value().lastname,
-      email: this.userForm().value().email,
-      role: this.userForm().value().role as 'superadmin' | 'admin' | 'supervisor' | 'viewer' | 'supervisor_harvest',
-      isActive: this.userForm().value().isActive === 'true',
-      password: this.userForm().value().password,
+  async create() {
+    if (this.userForm().invalid() || this.isSaving()) return;
+
+    const value = this.userForm().value();
+    const [rutPart, dvPart] = value.rut.includes('-')
+      ? value.rut.split('-')
+      : [value.rut, value.dv];
+
+    const payload: CreateUserPayload = {
+      rut: Number(rutPart),
+      dv: (dvPart || value.dv).trim().toUpperCase(),
+      name: value.name.trim(),
+      lastname: value.lastname.trim(),
+      email: value.email.trim(),
+      role: value.role as UserRow['role'],
+      password: value.password,
+      activeLand: value.activeLand || null,
+    };
+
+    if (value.isActive !== '') {
+      payload.isActive = String(value.isActive) === 'true';
     }
-    this.usersService.create(newUser).then(res => {
-      console.log(res);
-    }).catch(err => {
-      console.log(err);
-    });
+
+    if (value.activeLand.trim()) {
+      payload.activeLand = value.activeLand.trim();
+    }
+
+    this.isSaving.set(true);
+    this.errorMessage.set(null);
+    try {
+      await this.usersService.create(payload);
+      await this.router.navigate(['/users']);
+    } catch (error) {
+      this.errorMessage.set(
+        error instanceof Error ? error.message : 'No fue posible crear el usuario.',
+      );
+    } finally {
+      this.isSaving.set(false);
+    }
   }
 }

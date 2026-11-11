@@ -1,5 +1,14 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, Directive, TemplateRef, computed, contentChild, input, signal } from '@angular/core';
+import {
+  Component,
+  Directive,
+  TemplateRef,
+  computed,
+  contentChild,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { LucideSearch } from '@lucide/angular';
 
 export interface TableColumn {
@@ -27,12 +36,16 @@ export class CustomTable {
   readonly headers = input.required<readonly (string | TableColumn)[]>();
   readonly data = input.required<readonly TableItem[]>();
   readonly pageSize = input(10);
+  readonly totalRecords = input<number | null>(null);
+  readonly pageIndex = input<number | null>(null);
   readonly searchPlaceholder = input('Search...');
   readonly emptyMessage = input('No records found.');
   readonly customRow = contentChild(TableRowDirective);
+  readonly pageChange = output<number>();
 
   readonly query = signal('');
   readonly page = signal(1);
+  readonly isServerPaged = computed(() => this.totalRecords() !== null);
 
   readonly columns = computed<TableColumn[]>(() => {
     const firstItem = this.data()[0];
@@ -65,34 +78,54 @@ export class CustomTable {
     );
   });
 
-  readonly pageCount = computed(() => Math.max(1, Math.ceil(this.filtered().length / this.pageSize())));
+  readonly displayTotal = computed(() => this.totalRecords() ?? this.filtered().length);
 
-  readonly currentPage = computed(() => Math.min(this.page(), this.pageCount()));
+  readonly pageCount = computed(() =>
+    Math.max(1, Math.ceil(this.displayTotal() / this.pageSize())),
+  );
+
+  readonly currentPage = computed(() => {
+    const external = this.pageIndex();
+    const page = external ?? this.page();
+    return Math.min(Math.max(1, page), this.pageCount());
+  });
 
   readonly visible = computed(() => {
+    if (this.isServerPaged()) {
+      return this.filtered();
+    }
     const start = (this.currentPage() - 1) * this.pageSize();
     return this.filtered().slice(start, start + this.pageSize());
   });
 
   readonly rangeStart = computed(() =>
-    this.filtered().length === 0 ? 0 : (this.currentPage() - 1) * this.pageSize() + 1,
+    this.displayTotal() === 0 ? 0 : (this.currentPage() - 1) * this.pageSize() + 1,
   );
 
   readonly rangeEnd = computed(() =>
-    Math.min(this.currentPage() * this.pageSize(), this.filtered().length),
+    Math.min(this.currentPage() * this.pageSize(), this.displayTotal()),
   );
 
   onQuery(value: string) {
     this.query.set(value);
-    this.page.set(1);
+    if (!this.isServerPaged()) this.page.set(1);
   }
 
   previousPage() {
-    this.page.update((page) => Math.max(1, page - 1));
+    this.goToPage(this.currentPage() - 1);
   }
 
   nextPage() {
-    this.page.update((page) => Math.min(this.pageCount(), page + 1));
+    this.goToPage(this.currentPage() + 1);
+  }
+
+  private goToPage(page: number) {
+    const next = Math.min(this.pageCount(), Math.max(1, page));
+    if (this.isServerPaged()) {
+      this.pageChange.emit(next);
+      return;
+    }
+    this.page.set(next);
   }
 
   cellValue(item: TableItem, key: string): unknown {

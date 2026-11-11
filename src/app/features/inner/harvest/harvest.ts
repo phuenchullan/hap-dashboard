@@ -1,64 +1,105 @@
-import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
 import { Component, computed, inject, resource, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LucidePlus } from '@lucide/angular';
+import { Router } from '@angular/router';
+import { LucideEye, LucideSquarePen } from '@lucide/angular';
 import {
   CustomTable,
   TableColumn,
   TableRowDirective,
 } from '../../../core/components/custom-table/custom-table';
-import { CreateTake, Harvester, Take, Tray } from '../../../core/interfaces/harvest.interface';
+import { Modal } from '../../../core/components/modal/modal';
+import { Harvester, Plantation, Take, Tray } from '../../../core/interfaces/harvest.interface';
 import { HarvestApi } from '../../../core/services/harvest-api/harvest-api';
 
 @Component({
   selector: 'app-harvest',
-  imports: [CurrencyPipe, DecimalPipe, FormsModule, LucidePlus, CustomTable, TableRowDirective],
+  imports: [
+    CurrencyPipe,
+    DecimalPipe,
+    DatePipe,
+    FormsModule,
+    LucideEye,
+    LucideSquarePen,
+    CustomTable,
+    TableRowDirective,
+    Modal,
+  ],
   templateUrl: './harvest.html',
 })
 export class Harvest {
   private readonly api = inject(HarvestApi);
+  private readonly router = inject(Router);
 
   readonly pageSize = signal(10);
+  readonly page = signal(1);
+  readonly totalRecords = signal(0);
   readonly takes = signal<Take[]>([]);
   readonly harvesters = signal<Harvester[]>([]);
   readonly trays = signal<Tray[]>([]);
-  readonly isOpen = signal(false);
-  readonly isSaving = signal(false);
+  readonly plantations = signal<Plantation[]>([]);
+  readonly selectedTake = signal<Take | null>(null);
+  readonly isViewOpen = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  private readonly today = this.todayDate();
+  readonly startDate = signal(this.today);
+  readonly endDate = signal(this.today);
+  readonly appliedStartDate = signal(this.today);
+  readonly appliedEndDate = signal(this.today);
+
   readonly totalTrays = computed(() =>
     this.takes().reduce((total, take) => total + take.numberOfTray, 0),
   );
   readonly totalNet = computed(() => this.takes().reduce((total, take) => total + take.neto, 0));
   readonly headers = signal<TableColumn[]>([
+    { key: 'createdAt', label: 'Fecha' },
     { key: 'harvesterId', label: 'Cosechador' },
     { key: 'numberOfTray', label: 'Bandejas' },
     { key: 'brute', label: 'Bruto' },
     { key: 'neto', label: 'Neto' },
     { key: 'price', label: 'Precio' },
     { key: 'isLoaded', label: 'Sincronizado' },
-    { key: 'actions', label: 'Acciones' }
+    { key: 'actions', label: 'Acciones', searchable: false },
   ]);
 
-  form = {
-    trayId: '',
-    harvesterId: '',
-    numberOfTray: 0,
-    brute: 0,
-    neto: 0,
-    price: 0,
-  };
+  readonly detailData = computed(() => {
+    const take = this.selectedTake();
+    if (!take) return [];
+
+    return [
+      { key: 'Fecha', value: new Date(take.createdAt).toLocaleString('es-CL') },
+      { key: 'Cosechador', value: this.harvesterName(take.harvesterId) },
+      { key: 'Bandeja', value: this.trayName(take.trayId) },
+      { key: 'Plantación', value: this.plantationName(take.plantationId) },
+      { key: 'Bandejas', value: String(take.numberOfTray) },
+      { key: 'Bruto', value: String(take.brute) },
+      { key: 'Neto', value: String(take.neto) },
+      { key: 'Precio', value: String(take.price) },
+      { key: 'Sincronizado', value: take.isLoaded ? 'Sí' : 'Pendiente' },
+    ];
+  });
 
   readonly takesResource = resource({
-    loader: async () => {
+    params: () => ({
+      page: this.page(),
+      limit: this.pageSize(),
+      startDate: this.appliedStartDate(),
+      endDate: this.appliedEndDate(),
+    }),
+    loader: async ({ params }) => {
       try {
-        const [takes, harvesters, trays] = await Promise.all([
-          this.api.list<Take>('takes'),
-          this.api.list<Harvester>('harvesters'),
-          this.api.list<Tray>('trays'),
+        const catalogParams = { page: 1, limit: this.pageSize() };
+        const [takes, harvesters, trays, plantations] = await Promise.all([
+          this.api.list<Take>('takes', params),
+          this.api.list<Harvester>('harvesters', catalogParams),
+          this.api.list<Tray>('trays', catalogParams),
+          this.api.list<Plantation>('plantations', catalogParams),
         ]);
         this.takes.set(takes.data);
+        this.totalRecords.set(takes.meta.totalRecords);
         this.harvesters.set(harvesters.data);
         this.trays.set(trays.data);
+        this.plantations.set(plantations.data);
         this.errorMessage.set(null);
         return takes;
       } catch (error) {
@@ -68,51 +109,57 @@ export class Harvest {
     },
   });
 
+  applyDateFilter() {
+    if (this.startDate() && this.endDate() && this.startDate() > this.endDate()) {
+      this.errorMessage.set('La fecha inicial no puede ser posterior a la fecha final.');
+      return;
+    }
+    this.errorMessage.set(null);
+    this.page.set(1);
+    this.appliedStartDate.set(this.startDate());
+    this.appliedEndDate.set(this.endDate());
+  }
+
+  changePage(page: number) {
+    this.page.set(page);
+  }
+
   harvesterName(id: string) {
     const harvester = this.harvesters().find((item) => item.id === id);
     return harvester ? `${harvester.name} ${harvester.lastname}` : id;
   }
 
-  async create() {
-    if (
-      !this.form.trayId ||
-      !this.form.harvesterId ||
-      this.form.numberOfTray <= 0 ||
-      this.form.brute <= 0 ||
-      this.form.neto <= 0 ||
-      this.form.price <= 0
-    ) {
-      this.errorMessage.set('Completa todos los datos de la cosecha.');
-      return;
-    }
+  trayName(id: string) {
+    return this.trays().find((tray) => tray.id === id)?.tag ?? id;
+  }
 
-    const payload: CreateTake = {
-      ...this.form,
-      phoneId: `dashboard-${Date.now()}`,
-      isLoaded: false,
-    };
-    this.isSaving.set(true);
-    try {
-      await this.api.create<Take, CreateTake>('takes', payload);
-      this.form = {
-        trayId: '',
-        harvesterId: '',
-        numberOfTray: 0,
-        brute: 0,
-        neto: 0,
-        price: 0,
-      };
-      this.isOpen.set(false);
-      this.errorMessage.set(null);
-      this.takesResource.reload();
-    } catch (error) {
-      this.errorMessage.set(this.messageFrom(error));
-    } finally {
-      this.isSaving.set(false);
-    }
+  plantationName(id?: string | null) {
+    if (!id) return '—';
+    const plantation = this.plantations().find((item) => item.id === id);
+    return plantation ? `${plantation.fruit} · ${plantation.variety}` : id;
+  }
+
+  viewTake(take: Take) {
+    this.selectedTake.set(take);
+    this.isViewOpen.set(true);
+  }
+
+  editTake(take: Take) {
+    this.router.navigate(['/harvest', take.id]);
+  }
+
+  closeView(close: boolean) {
+    if (close) this.isViewOpen.set(false);
   }
 
   private messageFrom(error: unknown) {
     return error instanceof Error ? error.message : 'Ocurrió un error.';
+  }
+
+  private todayDate() {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${now.getFullYear()}-${month}-${day}`;
   }
 }

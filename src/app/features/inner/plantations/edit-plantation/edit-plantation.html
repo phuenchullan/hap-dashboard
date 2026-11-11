@@ -56,7 +56,22 @@
           <option value="m2">Metros cuadrados</option>
         </select>
       </label>
-      <label class="text-sm font-medium sm:col-span-2">
+      <label class="text-sm font-medium">
+        Terreno
+        <select
+          name="landId"
+          [(ngModel)]="selectedLandId"
+          (change)="onLandChange($event)"
+          required
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-[var(--hap-card)] px-3 outline-none"
+        >
+          <option value="">Selecciona un terreno</option>
+          @for (land of lands(); track land.id) {
+            <option [value]="land.id">{{ land.name }}</option>
+          }
+        </select>
+      </label>
+      <label class="text-sm font-medium">
         Cuartel
         <select
           name="blockId"
@@ -69,6 +84,26 @@
             <option [value]="block.id">{{ block.name }}</option>
           }
         </select>
+      </label>
+      <label class="text-sm font-medium">
+        Fecha de inicio
+        <input
+          name="startDate"
+          type="date"
+          [(ngModel)]="form.startDate"
+          required
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+        />
+      </label>
+      <label class="text-sm font-medium">
+        Fecha de fin
+        <input
+          name="endDate"
+          type="date"
+          [(ngModel)]="form.endDate"
+          required
+          class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+        />
       </label>
     </div>
     <div class="mt-6 flex justify-end gap-3">

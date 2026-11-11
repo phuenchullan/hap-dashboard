@@ -33,13 +33,15 @@ export interface Plantation {
   surface: number;
   unit: string;
   blockId: string;
+  startDate: string;
+  endDate?: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
 export type CreatePlantation = Pick<
   Plantation,
-  'fruit' | 'variety' | 'surface' | 'unit' | 'blockId'
+  'fruit' | 'variety' | 'surface' | 'unit' | 'blockId' | 'startDate' | 'endDate'
 >;
 
 export type UpdatePlantation = Partial<CreatePlantation>;
@@ -79,11 +81,14 @@ export type UpdateTray = Partial<CreateTray>;
 export interface Take {
   id: string;
   trayId: string;
+  plantationId?: string | null;
   harvesterId: string;
+  userId?: string;
   numberOfTray: number;
   brute: number;
   neto: number;
   price: number;
+  phoneTakeId?: number | null;
   phoneId: string;
   isLoaded: boolean;
   createdAt: string;
@@ -91,3 +96,4 @@ export interface Take {
 }
 
 export type CreateTake = Omit<Take, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateTake = Partial<CreateTake>;

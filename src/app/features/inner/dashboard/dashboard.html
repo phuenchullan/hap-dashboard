@@ -1,1 +1,230 @@
-<p>dashboard works!</p>
+<div class="mb-6">
+  <h1 class="text-2xl font-semibold text-foreground">Dashboard</h1>
+  <p class="mt-1 text-sm text-muted">
+    Indicadores de cosecha según el rango de fechas seleccionado.
+  </p>
+</div>
+
+@if (errorMessage()) {
+  <div
+    class="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+  >
+    {{ errorMessage() }}
+  </div>
+}
+
+<div class="card mb-5 grid gap-4 p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+  <label class="text-sm font-medium">
+    Fecha inicial
+    <input
+      type="date"
+      [ngModel]="startDate()"
+      (ngModelChange)="startDate.set($event)"
+      class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+    />
+  </label>
+  <label class="text-sm font-medium">
+    Fecha final
+    <input
+      type="date"
+      [ngModel]="endDate()"
+      (ngModelChange)="endDate.set($event)"
+      class="mt-1.5 h-9 w-full rounded-lg border border-input bg-transparent px-3 outline-none focus:border-ring"
+    />
+  </label>
+  <button
+    type="button"
+    (click)="applyDateFilter()"
+    class="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground"
+  >
+    <svg lucideCalendarRange class="size-4" aria-hidden="true"></svg>
+    Filtrar
+  </button>
+</div>
+
+@if (dashboardResource.isLoading()) {
+  <div class="card p-6 text-sm text-muted">Cargando indicadores de cosecha...</div>
+} @else {
+  <div class="mb-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="card p-4">
+      <div class="flex items-center justify-between text-muted">
+        <p class="text-xs uppercase">Bandejas</p>
+        <svg lucideBoxes class="size-4" aria-hidden="true"></svg>
+      </div>
+      <p class="mt-2 text-2xl font-semibold">{{ totalTrays() | number: '1.0-0' }}</p>
+    </div>
+    <div class="card p-4">
+      <div class="flex items-center justify-between text-muted">
+        <p class="text-xs uppercase">Kg netos</p>
+        <svg lucideScale class="size-4" aria-hidden="true"></svg>
+      </div>
+      <p class="mt-2 text-2xl font-semibold">{{ totalNet() | number: '1.1-1' }}</p>
+    </div>
+    <div class="card p-4">
+      <div class="flex items-center justify-between text-muted">
+        <p class="text-xs uppercase">Kg brutos</p>
+        <svg lucideChartColumn class="size-4" aria-hidden="true"></svg>
+      </div>
+      <p class="mt-2 text-2xl font-semibold">{{ totalBrute() | number: '1.1-1' }}</p>
+    </div>
+    <div class="card p-4">
+      <div class="flex items-center justify-between text-muted">
+        <p class="text-xs uppercase">Valor</p>
+        <svg lucideBanknote class="size-4" aria-hidden="true"></svg>
+      </div>
+      <p class="mt-2 text-2xl font-semibold">
+        {{ totalValue() | currency: 'CLP' : 'symbol-narrow' : '1.0-0' }}
+      </p>
+    </div>
+  </div>
+
+  <div class="mb-5 grid gap-4 lg:grid-cols-2">
+    <section class="card p-4">
+      <div class="mb-4 flex items-center gap-2">
+        <svg lucideTrophy class="size-4 text-primary" aria-hidden="true"></svg>
+        <h2 class="font-semibold">5 mejores cosechadores</h2>
+      </div>
+      @if (topHarvesters().length === 0) {
+        <p class="text-sm text-muted">No hay cosechas en este rango.</p>
+      } @else {
+        <ul class="space-y-3">
+          @for (item of topHarvesters(); track item.id) {
+            <li>
+              <div class="mb-1 flex items-center justify-between gap-3 text-sm">
+                <span class="truncate font-medium">{{ item.label }}</span>
+                <span class="text-muted">{{ item.neto | number: '1.1-1' }} kg</span>
+              </div>
+              <div class="h-2 overflow-hidden rounded-full bg-muted">
+                <div class="h-full rounded-full bg-[#39a188]" [style.width.%]="item.percent"></div>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <section class="card p-4">
+      <div class="mb-4 flex items-center gap-2">
+        <svg lucideTrendingDown class="size-4 text-red-400" aria-hidden="true"></svg>
+        <h2 class="font-semibold">5 peores cosechadores</h2>
+      </div>
+      @if (worstHarvesters().length === 0) {
+        <p class="text-sm text-muted">No hay cosechas en este rango.</p>
+      } @else {
+        <ul class="space-y-3">
+          @for (item of worstHarvesters(); track item.id) {
+            <li>
+              <div class="mb-1 flex items-center justify-between gap-3 text-sm">
+                <span class="truncate font-medium">{{ item.label }}</span>
+                <span class="text-muted">{{ item.neto | number: '1.1-1' }} kg</span>
+              </div>
+              <div class="h-2 overflow-hidden rounded-full bg-muted">
+                <div class="h-full rounded-full bg-[#c46b72]" [style.width.%]="item.percent"></div>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+
+  <div class="mb-5 grid gap-4 lg:grid-cols-2">
+    <section class="card p-4">
+      <div class="mb-4 flex items-center gap-2">
+        <svg lucideChartPie class="size-4 text-primary" aria-hidden="true"></svg>
+        <h2 class="font-semibold">Cosecha por tipo de bandeja</h2>
+      </div>
+      @if (trayShares().length === 0) {
+        <p class="text-sm text-muted">No hay bandejas registradas en este rango.</p>
+      } @else {
+        <div class="flex flex-col items-center gap-5 sm:flex-row">
+          <div class="chart-ring" [style.background]="trayGradient()"></div>
+          <ul class="w-full space-y-2">
+            @for (item of trayShares(); track item.id) {
+              <li class="flex items-center justify-between gap-3 text-sm">
+                <span class="flex items-center gap-2">
+                  <span class="size-2.5 rounded-full" [style.background]="item.color"></span>
+                  {{ item.label }}
+                </span>
+                <span class="text-muted">{{ item.percent | number: '1.0-1' }}%</span>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </section>
+
+    <section class="card p-4">
+      <div class="mb-4 flex items-center gap-2">
+        <svg lucideWheat class="size-4 text-primary" aria-hidden="true"></svg>
+        <h2 class="font-semibold">Cosecha por tipo de cultivo</h2>
+      </div>
+      @if (cropShares().length === 0) {
+        <p class="text-sm text-muted">No hay cultivos registrados en este rango.</p>
+      } @else {
+        <div class="flex flex-col items-center gap-5 sm:flex-row">
+          <div class="chart-ring" [style.background]="cropGradient()"></div>
+          <ul class="w-full space-y-2">
+            @for (item of cropShares(); track item.id) {
+              <li class="flex items-center justify-between gap-3 text-sm">
+                <span class="flex items-center gap-2">
+                  <span class="size-2.5 rounded-full" [style.background]="item.color"></span>
+                  {{ item.label }}
+                </span>
+                <span class="text-muted">{{ item.percent | number: '1.0-1' }}%</span>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </section>
+  </div>
+
+  <div class="grid gap-4 lg:grid-cols-[2fr_1fr]">
+    <section class="card p-4">
+      <div class="mb-4 flex items-center gap-2">
+        <svg lucideChartColumn class="size-4 text-primary" aria-hidden="true"></svg>
+        <h2 class="font-semibold">Bandejas por día</h2>
+      </div>
+      @if (dailySeries().length === 0) {
+        <p class="text-sm text-muted">Selecciona un rango de fechas para ver la evolución.</p>
+      } @else {
+        <div class="flex h-48 gap-1">
+          @for (point of dailySeries(); track point.date) {
+            <div class="flex min-w-0 flex-1 flex-col items-center">
+              <div class="flex w-full flex-1 items-end">
+                <div
+                  class="mx-auto w-full max-w-8 rounded-t bg-primary/80"
+                  [style.height.%]="point.percent || 4"
+                ></div>
+              </div>
+              <span class="mt-1 truncate text-[10px] text-muted">{{ point.label }}</span>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="card p-4">
+      <h2 class="mb-4 font-semibold">Resumen del rango</h2>
+      <ul class="space-y-3 text-sm">
+        <li class="flex items-center justify-between">
+          <span class="text-muted">Registros</span>
+          <span class="font-medium">{{ totalTakes() }}</span>
+        </li>
+        <li class="flex items-center justify-between">
+          <span class="text-muted">Bandejas</span>
+          <span class="font-medium">{{ totalTrays() | number: '1.0-0' }}</span>
+        </li>
+        <li class="flex items-center justify-between">
+          <span class="text-muted">Sincronizado</span>
+          <span class="font-medium">{{ syncedPercent() | number: '1.0-1' }}%</span>
+        </li>
+        <li class="flex items-center justify-between">
+          <span class="text-muted">Cosechadores</span>
+          <span class="font-medium">{{ rankedCount() }}</span>
+        </li>
+      </ul>
+    </section>
+  </div>
+}

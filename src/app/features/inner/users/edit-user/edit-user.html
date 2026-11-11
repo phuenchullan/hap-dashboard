@@ -87,7 +87,7 @@
           Role
         </label>
         <select
-          class="flex w-fit items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*='size-'])]:size-4"
+          class="flex w-full items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*='size-'])]:size-4"
           [formField]="userForm.role"
         >
           @for (role of roles(); track role.key) {
@@ -107,26 +107,32 @@
           >Status</label
         >
         <select
-          class="flex w-fit items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*='size-'])]:size-4"
+          class="flex w-full items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*='size-'])]:size-4"
           [formField]="userForm.isActive"
         >
-          @if (userForm.isActive().value() === 'true') {
-            <option value="true" selected>Active</option>
-          } @else {
-            <option value="true">Active</option>
-          }
-          @if (userForm.isActive().value() === 'false') {
-            <option value="false" selected>Inactive</option>
-          } @else {
-            <option value="false">Inactive</option>
-          }
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
         </select>
       </div>
       <div>
-        <select class="flex w-fit items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*='size-'])]:size-4">
-        @for (land of lands(); track land.id) {
-          <option [value]="land.id">{{ land.name }}</option>
-        }
+        <label
+          data-slot="label"
+          class="items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 mb-1.5 block text-sm"
+          for="activeLand"
+          >Seleccionar fundo</label
+        >
+        <select
+          class="flex w-full items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*='size-'])]:size-4"
+          [formField]="userForm.activeLand"
+        >
+          <option value="">Sin fundo</option>
+          @for (land of lands(); track land.id) {
+            @if (userForm.activeLand().value() === land.id) {
+              <option [value]="land.id" selected>{{ land.name }}</option>
+            } @else {   
+              <option [value]="land.id">{{ land.name }}</option>
+            }
+          }
         </select>
       </div>
     </div>
@@ -155,265 +161,3 @@
     </div>
   </form>
 </div>
-
-<!--<section class="card mt-4" style="padding: var(--hap-card-padding)">
-  <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-    <div class="flex items-start gap-3">
-      <span
-        class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
-      >
-        <svg lucideShieldCheck class="size-5" aria-hidden="true"></svg>
-      </span>
-      <div>
-        <h2 class="text-lg font-semibold text-foreground">Permissions</h2>
-        <p class="mt-1 text-sm text-muted">
-          Define which modules and actions this user can access.
-        </p>
-      </div>
-    </div>
-    <button
-      type="button"
-      class="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80"
-      (click)="addPermission()"
-    >
-      <svg lucidePlus class="size-4" aria-hidden="true"></svg>
-      Add permission
-    </button>
-  </div>
-
-  <form (submit)="$event.preventDefault()" class="space-y-3">
-    @for (permission of permissions(); track permission.uid; let permissionIndex = $index) {
-      <fieldset class="rounded-lg border border-border bg-muted/20 p-4">
-        <legend class="sr-only">Permission {{ permissionIndex + 1 }}</legend>
-        <div
-          class="grid gap-4 lg:grid-cols-[minmax(180px,1.4fr)_repeat(4,minmax(90px,0.7fr))_40px] lg:items-end"
-        >
-          <div>
-            <label
-              class="mb-1.5 block text-sm font-medium"
-              [for]="'permission-module-' + permission.uid"
-            >
-              Module
-            </label>
-            <select
-              class="h-9 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-              [id]="'permission-module-' + permission.uid"
-              [value]="permission.module"
-              (change)="updatePermission(permissionIndex, 'module', $any($event.target).value)"
-            >
-              <option value="">Select a module</option>
-              @for (module of permissionModules(); track module.key) {
-                <option [value]="module.key">{{ module.value }}</option>
-              }
-            </select>
-          </div>
-
-          <label
-            class="flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-border px-3 text-sm"
-          >
-            <input
-              type="checkbox"
-              class="size-4 rounded border-input accent-[var(--hap-primary)]"
-              [checked]="permission.canRead"
-              (change)="updatePermission(permissionIndex, 'canRead', $any($event.target).checked)"
-            />
-            Read
-          </label>
-          <label
-            class="flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-border px-3 text-sm"
-          >
-            <input
-              type="checkbox"
-              class="size-4 rounded border-input accent-[var(--hap-primary)]"
-              [checked]="permission.canCreate"
-              (change)="updatePermission(permissionIndex, 'canCreate', $any($event.target).checked)"
-            />
-            Create
-          </label>
-          <label
-            class="flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-border px-3 text-sm"
-          >
-            <input
-              type="checkbox"
-              class="size-4 rounded border-input accent-[var(--hap-primary)]"
-              [checked]="permission.canUpdate"
-              (change)="updatePermission(permissionIndex, 'canUpdate', $any($event.target).checked)"
-            />
-            Update
-          </label>
-          <label
-            class="flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-border px-3 text-sm"
-          >
-            <input
-              type="checkbox"
-              class="size-4 rounded border-input accent-[var(--hap-primary)]"
-              [checked]="permission.canDelete"
-              (change)="updatePermission(permissionIndex, 'canDelete', $any($event.target).checked)"
-            />
-            Delete
-          </label>
-          <button
-            type="button"
-            class="inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-red-500/10 hover:text-red-400"
-            [attr.aria-label]="'Remove permission ' + (permissionIndex + 1)"
-            (click)="removePermission(permissionIndex)"
-          >
-            <svg lucideTrash2 class="size-4" aria-hidden="true"></svg>
-          </button>
-        </div>
-      </fieldset>
-    } @empty {
-      <div class="rounded-lg border border-dashed border-border px-4 py-8 text-center">
-        <p class="text-sm font-medium text-foreground">No permissions assigned</p>
-        <p class="mt-1 text-sm text-muted">
-          Add the first permission to configure this user's access.
-        </p>
-      </div>
-    }
-
-    @if (hasPermissionErrors()) {
-      <p class="text-sm text-red-400">Select a module in every row and avoid duplicated modules.</p>
-    }
-
-    <div class="flex items-center justify-between border-t border-border pt-4">
-      <p class="text-sm text-muted">{{ permissions().length }} permission(s) configured</p>
-      <p class="text-xs text-muted">Review permissions before updating the user.</p>
-    </div>
-  </form>
-</section>-->
-
-@if (false) {
-  <div class="hidden" aria-hidden="true">
-    <form>
-      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <div>
-          <label
-            data-slot="label"
-            class="items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 mb-1.5 block text-sm"
-            for="Rut"
-          >
-            Rut
-          </label>
-          <input
-            data-slot="input"
-            class="h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
-            placeholder="Rut"
-            [formField]="userForm.rut"
-          />
-        </div>
-        <div>
-          <label
-            data-slot="label"
-            class="items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 mb-1.5 block text-sm"
-            for="name"
-          >
-            Name
-          </label>
-          <input
-            data-slot="input"
-            class="h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
-            placeholder="name"
-            [formField]="userForm.name"
-          />
-        </div>
-        <div>
-          <label
-            data-slot="label"
-            class="items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 mb-1.5 block text-sm"
-            for="lastname"
-          >
-            Last Name
-          </label>
-          <input
-            data-slot="input"
-            class="h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
-            placeholder="Last Name"
-            [formField]="userForm.lastname"
-          />
-        </div>
-        <div>
-          <label
-            data-slot="label"
-            class="items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 mb-1.5 block text-sm"
-            for="email"
-          >
-            Email
-          </label>
-          <input
-            data-slot="input"
-            class="h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
-            placeholder="user@example.com"
-            type="email"
-            [formField]="userForm.email"
-          />
-        </div>
-        <div>
-          <label
-            data-slot="label"
-            class="items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 mb-1.5 block text-sm"
-            for="role"
-          >
-            Role
-          </label>
-          <select
-            class="flex w-fit items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*='size-'])]:size-4"
-            [formField]="userForm.role"
-          >
-            @for (role of roles(); track role.key) {
-              @if (userForm.role().value() === role.key) {
-                <option [value]="role.key" selected>{{ role.value }}</option>
-              } @else {
-                <option [value]="role.key">{{ role.value }}</option>
-              }
-            }
-          </select>
-        </div>
-        <div>
-          <label
-            data-slot="label"
-            class="items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 mb-1.5 block text-sm"
-            for="status"
-            >Status</label
-          >
-          <select
-            class="flex w-fit items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*='size-'])]:size-4"
-            [formField]="userForm.isActive"
-          >
-            @if (userForm.isActive().value() === 'true') {
-              <option value="true" selected>Active</option>
-            } @else {
-              <option value="true">Active</option>
-            }
-            @if (userForm.isActive().value() === 'false') {
-              <option value="false" selected>Inactive</option>
-            } @else {
-              <option value="false">Inactive</option>
-            }
-          </select>
-        </div>
-      </div>
-      <div class="mt-6 flex justify-end gap-3">
-        <button
-          (click)="close()"
-          data-slot="button"
-          data-variant="ghost"
-          data-size="default"
-          class="group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*='size-'])]:size-4 hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50 h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2"
-          type="button"
-        >
-          Cancel
-        </button>
-        <button
-          data-slot="button"
-          data-variant="default"
-          data-size="default"
-          class="group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*='size-'])]:size-4 bg-primary text-primary-foreground [a]:hover:bg-primary/80 h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2"
-          type="button"
-          [disabled]="userForm().invalid()"
-        >
-          Actualizar
-        </button>
-      </div>
-    </form>
-  </div>
-}

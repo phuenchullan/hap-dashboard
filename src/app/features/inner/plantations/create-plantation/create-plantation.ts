@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import {
   Block,
   CreatePlantation as CreatePlantationPayload,
+  Land,
   Plantation,
 } from '../../../../core/interfaces/harvest.interface';
 import { HarvestApi } from '../../../../core/services/harvest-api/harvest-api';
@@ -18,8 +19,10 @@ export class CreatePlantation {
   private readonly router = inject(Router);
 
   readonly blocks = signal<Block[]>([]);
+  readonly lands = signal<Land[]>([]);
   readonly isSaving = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly selectedLandId = signal<string>('');
 
   form: CreatePlantationPayload = {
     fruit: '',
@@ -27,21 +30,35 @@ export class CreatePlantation {
     surface: 0,
     unit: 'ha',
     blockId: '',
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: null,
   };
 
-  readonly blocksResource = resource({
+
+
+
+  onLandChange(e: any) {
+    const landId = e.target.value;
+    this.api.list<Block>('blocks', { land: landId }).then((blocks) => {
+      this.blocks.set(blocks.data);
+    });
+  }
+
+ readonly landsResource = resource({
     loader: async () => {
       try {
-        const response = await this.api.list<Block>('blocks');
-        this.blocks.set(response.data);
+        const [lands] = await Promise.all([
+          this.api.list<Land>('lands'),
+        ]);
+        this.lands.set(lands.data);
         this.errorMessage.set(null);
-        return response;
+        return lands;
       } catch (error) {
         this.errorMessage.set(this.messageFrom(error));
         return null;
       }
     },
-  });
+  });  
 
   close() {
     this.router.navigate(['/plantations']);
@@ -53,6 +70,8 @@ export class CreatePlantation {
       fruit: this.form.fruit.trim(),
       variety: this.form.variety.trim(),
       surface: Number(this.form.surface),
+      startDate: this.form.startDate,
+      endDate: this.form.endDate,
     };
 
     if (

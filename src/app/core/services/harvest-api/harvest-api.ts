@@ -7,8 +7,37 @@ import { Storage } from '../storage/storage';
 export class HarvestApi {
   private readonly storage = inject(Storage);
 
-  async list<T>(resource: string): Promise<PageResponse<T>> {
-    return this.request<PageResponse<T>>(`/${resource}?page=1&limit=100`);
+  async list<T>(
+    resource: string,
+    params: Record<string, string | number | undefined> = {},
+  ): Promise<PageResponse<T>> {
+    const query = new URLSearchParams({ page: '1', limit: '100' });
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== undefined && value !== '') query.set(key, String(value));
+    }
+    return this.request<PageResponse<T>>(`/${resource}?${query.toString()}`);
+  }
+
+  async listAll<T>(
+    resource: string,
+    params: Record<string, string | number | undefined> = {},
+  ): Promise<T[]> {
+    const limit = Number(params['limit']) || 100;
+    const items: T[] = [];
+    let page = 1;
+
+    while (page <= 50) {
+      const response = await this.list<T>(resource, { ...params, page, limit });
+      items.push(...response.data);
+      const total = response.meta.totalRecords ?? items.length;
+      if (items.length >= total || response.data.length < limit) break;
+      page += 1;
+    }
+
+    return items;
+  }
+  async getMe(): Promise<any> {
+    return this.request('/users/me');
   }
 
   async get<T>(resource: string, id: string): Promise<T> {

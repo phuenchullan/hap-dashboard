@@ -8,17 +8,21 @@ export interface UserPermission {
 
 export interface UserRow {
   id: string;
-  rut: number;
+  rut: string | number;
   dv: string;
   name: string;
   lastname: string;
   email: string;
   role: 'superadmin' | 'admin' | 'supervisor' | 'viewer' | 'supervisor_harvest';
-  isActive: boolean;
+  isActive?: boolean;
+  activeLand?: string | null;
   password?: string;
-  permissions?: UserPermission[];
 }
 
+export type CreateUser = Omit<UserRow, 'id'> & {
+  password: string;
+};
+
 export type UpdateUser = Partial<
-  Pick<UserRow, 'rut' | 'dv' | 'name' | 'lastname' | 'email' | 'role' | 'isActive'>
+  Pick<UserRow, 'rut' | 'dv' | 'name' | 'lastname' | 'email' | 'role' | 'isActive' | 'activeLand'>
 >;

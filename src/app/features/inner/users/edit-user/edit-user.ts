@@ -6,8 +6,7 @@ import { FormField, FormRoot, required } from '@angular/forms/signals';
 import { form } from '@angular/forms/signals';
 import { Users as UsersService } from '../../../../core/services/users/users';
 import { Land } from '../../../../core/interfaces/harvest.interface';
-import { httpResource } from '@angular/common/http';
-import { environment } from '../../../../../environments/environment.development';
+import { HarvestApi } from '../../../../core/services/harvest-api/harvest-api';
 
 interface EditablePermission extends UserPermission {
   uid: number;
@@ -20,6 +19,7 @@ interface EditablePermission extends UserPermission {
   templateUrl: './edit-user.html',
 })
 export class EditUser {
+  api = inject(HarvestApi);
   router = inject(Router);
   route = inject(ActivatedRoute);
   storage = inject(Storage);
@@ -31,18 +31,9 @@ export class EditUser {
   lands = signal<Land[]>([]);
   landsResource = resource({
     loader: async () => {
-      const accessToken = await this.storage.getItem('accessToken');
-      const response = await fetch(`http://${environment.apiUrl}/lands`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const data = await response.json();
-      console.log(data);
-      this.lands.set(data);
-      return data;
+      const response = await this.api.list<Land>('lands');
+      this.lands.set(response.data || []);
+      return response;
     },
   });
 
@@ -78,52 +69,36 @@ export class EditUser {
     name: '',
     lastname: '',
     email: '',
-    role: '',
-    landId: '',
-    isActive: 'false',
+    role: 'admin',
+    isActive: 'true',
+    activeLand: '',
   });
 
   userForm = form(this.userModel, (schemaPath) => {
-    required(schemaPath.rut, { message: 'El nombre de usuario es requerido' });
+    required(schemaPath.rut, { message: 'El RUT es requerido' });
     required(schemaPath.dv, { message: 'El DV es requerido' });
     required(schemaPath.name, { message: 'El nombre es requerido' });
     required(schemaPath.lastname, { message: 'El apellido es requerido' });
     required(schemaPath.email, { message: 'El email es requerido' });
     required(schemaPath.role, { message: 'El rol es requerido' });
-    required(schemaPath.isActive, { message: 'El estado es requerido' });
   });
 
   userResource = resource({
     loader: async () => {
       const id = this.route.snapshot.params['id'];
-      const accessToken = await this.storage.getItem('accessToken');
-      const response = await fetch(`http://localhost:3000/users/${id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const newUser = await response.json();
+      const response = await this.api.get<UserRow>(`users`, id);
       this.userModel.set({
-        id: newUser.id,
-        rut: newUser.rut,
-        dv: newUser.dv,
-        name: newUser.name,
-        lastname: newUser.lastname,
-        email: newUser.email,
-        landId: newUser.landId,
-        role: newUser.role,
-        isActive: String(newUser.isActive),
+        id: response.id,
+        rut: String(response.rut ?? ''),
+        dv: response.dv ?? '',
+        name: response.name ?? '',
+        lastname: response.lastname ?? '',
+        email: response.email ?? '',
+        role: response.role ?? 'admin',
+        isActive: response.isActive === false ? 'false' : 'true',
+        activeLand: response.activeLand ?? '',
       });
-      this.permissions.set(
-        Array.isArray(newUser.permissions) && newUser.permissions.length > 0
-          ? newUser.permissions.map((permission: UserPermission) =>
-              this.createPermission(permission),
-            )
-          : [this.createPermission({ module: 'users', canRead: true })],
-      );
-      return newUser;
+      return response;
     },
   });
 
@@ -155,7 +130,7 @@ export class EditUser {
 
   async update() {
     const id = this.route.snapshot.params['id'];
-    if (!id || this.userForm().invalid()) return;
+    if (!id || this.userForm().invalid() || this.isSaving()) return;
 
     const value = this.userForm().value();
     const payload: UpdateUser = {
@@ -165,8 +140,17 @@ export class EditUser {
       lastname: value.lastname.trim(),
       email: value.email.trim(),
       role: value.role as UserRow['role'],
-      isActive: String(value.isActive) === 'true',
     };
+
+    if (value.isActive !== '') {
+      payload.isActive = String(value.isActive) === 'true';
+    }
+
+    if (value.activeLand.trim()) {
+      payload.activeLand = value.activeLand.trim();
+    } else {
+      payload.activeLand = null;
+    }
 
     this.isSaving.set(true);
     this.errorMessage.set(null);

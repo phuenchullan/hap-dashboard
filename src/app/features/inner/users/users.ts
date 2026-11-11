@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { Modal } from '../../../core/components/modal/modal';
 import { Storage } from '../../../core/services/storage/storage';
 import { Users as UsersService } from '../../../core/services/users/users';
+import { HarvestApi } from '../../../core/services/harvest-api/harvest-api';
 
 @Component({
   imports: [
@@ -23,6 +24,8 @@ import { Users as UsersService } from '../../../core/services/users/users';
   templateUrl: './users.html',
 })
 export class Users {
+
+  api = inject(HarvestApi);
   pageSize = signal(10);
   router = inject(Router);
   storage = inject(Storage);
@@ -60,6 +63,15 @@ export class Users {
   ]);
 
   users = signal<UserRow[]>([]);
+  userLogged = signal<UserRow | null>(null);
+
+  userLoggedResource = resource({
+    loader: async () => {
+      const response = await this.api.getMe();
+      this.userLogged.set(response);
+      return response;
+    },
+  });
 
   usersResource = resource({
     loader: async () => {
@@ -75,17 +87,17 @@ export class Users {
       this.users.set(data);
       return data;
     },
-  });
-
+  }); 
+ 
   createUser() {
     this.router.navigate(['/users/create']);
   }
 
   statusClass(status: UserRow['isActive']) {
     const base = 'inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium capitalize';
-    return status
-      ? `${base} bg-[#39a188]/15 text-[#39a188]`
-      : `${base} bg-[#c46b72]/15 text-[#c46b72]`;
+    return status === false
+      ? `${base} bg-[#c46b72]/15 text-[#c46b72]`
+      : `${base} bg-[#39a188]/15 text-[#39a188]`;
   }
 
   openViewUser(user: UserRow) {

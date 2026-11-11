@@ -86,6 +86,10 @@ export const innerRoutes: Routes = [
     loadComponent: () => import('./harvest/harvest').then((m) => m.Harvest),
   },
   {
+    path: 'harvest/:id',
+    loadComponent: () => import('./harvest/edit-harvest/edit-harvest').then((m) => m.EditHarvest),
+  },
+  {
     path: 'layout',
     loadComponent: () => import('../../core/layout/main/main').then((m) => m.Main),
   },

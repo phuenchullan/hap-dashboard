@@ -1,6 +1,6 @@
 import { Component, computed, input, signal } from '@angular/core';
 import { AsideItem } from './aside-item/aside-item';
-import { type LucideIcon, LucideLayoutDashboard, LucideMap, LucideUser } from '@lucide/angular';
+import { LucideBlocks, LucideBoxes, LucideHardHat, type LucideIcon, LucideLandPlot, LucideLayoutDashboard, LucideSprout, LucideUsers, LucideWheat } from '@lucide/angular';
 
 interface TagIcon {
   selected: boolean;
@@ -19,13 +19,13 @@ export class AdminAside {
   itemSelected = signal<boolean>(true);
   tagIcons = signal<TagIcon[]>([
     { selected: true, icon: LucideLayoutDashboard, tag: 'Dashboard', link: '/dashboard' },
-    { selected: false, icon: LucideUser, tag: 'Users', link: '/users' },
-    { selected: false, icon: LucideMap, tag: 'Lands', link: '/lands' },
-    { selected: false, icon: LucideMap, tag: 'Blocks', link: '/blocks' },
-    { selected: false, icon: LucideMap, tag: 'Plantations', link: '/plantations' },
-    { selected: false, icon: LucideMap, tag: 'Trays', link: '/trays' },
-    { selected: false, icon: LucideUser, tag: 'Harvesters', link: '/harvesters' },
-    { selected: false, icon: LucideLayoutDashboard, tag: 'Harvest', link: '/harvest' },
+    { selected: false, icon: LucideSprout, tag: 'Harvest', link: '/harvest' },
+    { selected: false, icon: LucideHardHat, tag: 'Harvesters', link: '/harvesters' },
+    { selected: false, icon: LucideUsers, tag: 'Users', link: '/users' },
+    { selected: false, icon: LucideLandPlot, tag: 'Lands', link: '/lands' },
+    { selected: false, icon: LucideBlocks, tag: 'Blocks', link: '/blocks' },
+    { selected: false, icon: LucideWheat, tag: 'Plantations', link: '/plantations' },
+    { selected: false, icon: LucideBoxes, tag: 'Trays', link: '/trays' },
   ]);
 
   isOpenSidebar = input.required<boolean>();

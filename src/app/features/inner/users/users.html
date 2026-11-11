@@ -59,14 +59,16 @@
         >
           <svg lucideSquarePen class="size-4" aria-hidden="true"></svg>
         </button>
-        <button
-          type="button"
-          (click)="deleteUser(user)"
-          class="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
-          [attr.aria-label]="'View ' + user.name"
-        >
-          <svg lucideTrash class="size-4" aria-hidden="true"></svg>
-        </button>
+        @if (userLogged()?.role === 'superadmin') {
+          <button
+            type="button"
+            (click)="deleteUser(user)"
+            class="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+            [attr.aria-label]="'View ' + user.name"
+          >
+            <svg lucideTrash class="size-4" aria-hidden="true"></svg>
+          </button>
+        }
       </td>
     </tr>
   </ng-template>
